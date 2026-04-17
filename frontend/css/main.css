@@ -1,0 +1,172 @@
+:root {
+    /* Color Palette - Neon Cyberpunk/Glassmorphism theme */
+    --c-bg: #05050A; /* Extremely deep blue/black */
+    --c-card-bg: rgba(22, 23, 38, 0.65);
+    --c-glass-border: rgba(255, 255, 255, 0.08);
+    
+    --c-neon-blue: #00f0ff;
+    --c-neon-purple: #b026fa;
+    --c-neon-green: #00ff66;
+    --c-neon-red: #ff3366;
+    
+    --c-text-main: #f0f0f5;
+    --c-text-muted: #8b8f9e;
+
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body.dark-theme {
+    background-color: var(--c-bg);
+    color: var(--c-text-main);
+    font-family: var(--font-body);
+    min-height: 100vh;
+    overflow: hidden; /* It's an SPA */
+    position: relative;
+}
+
+/* Ambient Glows for Background */
+.ambient-glow {
+    position: absolute;
+    width: 60vw;
+    height: 60vw;
+    border-radius: 50%;
+    filter: blur(120px);
+    z-index: -2;
+    opacity: 0.15;
+    pointer-events: none;
+}
+
+.bg-top-left {
+    top: -20vw;
+    left: -20vw;
+    background: radial-gradient(circle, var(--c-neon-blue), transparent 60%);
+}
+
+.bg-bottom-right {
+    bottom: -20vw;
+    right: -20vw;
+    background: radial-gradient(circle, var(--c-neon-purple), transparent 60%);
+}
+
+/* Noise overlay for texture */
+#noise-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Typography Enhancements */
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+.text-gradient {
+    background: linear-gradient(90deg, var(--c-neon-blue), var(--c-neon-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.text-gradient-blue { background: linear-gradient(90deg, #fff, var(--c-neon-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.text-gradient-purple { background: linear-gradient(90deg, #fff, var(--c-neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+.text-red { color: var(--c-neon-red); }
+.text-green { color: var(--c-neon-green); }
+.text-muted { color: var(--c-text-muted); }
+.text-sm { font-size: 0.85rem; }
+.text-xs { font-size: 0.75rem; }
+.font-bold { font-weight: 600; }
+.dim { opacity: 0.5; }
+
+/* Utilities */
+.hidden { display: none !important; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-grow { flex-grow: 1; }
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-gap { display: flex; gap: 1.5rem; }
+.relative { position: relative; }
+.w-full { width: 100%; }
+.full-height { height: 100%; }
+
+/* Margins & Padding */
+.mt-sm { margin-top: 0.5rem; }
+.mt-md { margin-top: 1rem; }
+.mt-lg { margin-top: 1.5rem; }
+.mt-xl { margin-top: 3rem; }
+.mb-sm { margin-bottom: 0.5rem; }
+.mb-md { margin-bottom: 1rem; }
+
+/* Layout Base */
+#app-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.page {
+    display: none;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    padding-top: 80px; /* Leave space for nav */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.page.active {
+    display: block;
+    opacity: 1;
+    animation: fadeIn 0.4s ease forwards;
+}
+
+.layout-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 2rem 2rem 2rem;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    gap: 1.5rem;
+}
+
+/* Scrollbars */
+html {
+    scroll-behavior: smooth;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--c-glass-border); border-radius: 4px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--c-text-muted); }
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.5; }
+    50% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+@keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+.pulse-text-green {
+    animation: pulse 2s infinite;
+    color: var(--c-neon-green);
+    text-shadow: 0 0 10px rgba(0,255,102,0.5);
+}
