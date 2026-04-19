@@ -169,6 +169,41 @@ button {
 .stadium-node .node-val { font-size: 1.5rem; font-weight: 700; font-family: var(--font-heading);}
 .stadium-node .node-status-icon { position: absolute; top:5px; right:5px; font-size: 1.2rem; }
 
+/* Tooltip & Blink Animations via JS triggers */
+.stadium-node .tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(10,10,15,0.95);
+    border: 1px solid var(--c-neon-blue);
+    padding: 10px 15px;
+    border-radius: 8px;
+    white-space: nowrap;
+    z-index: 100;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    text-align: left;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    line-height: 1.4;
+}
+.stadium-node:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+@keyframes sensor-blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+.sensor-blink {
+    animation: sensor-blink 1s infinite alternate;
+}
+
 /* AR overlays */
 .ar-simulation {
     position: relative;

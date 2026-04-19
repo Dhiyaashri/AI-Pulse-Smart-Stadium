@@ -111,7 +111,7 @@ def get_state():
 @app.route('/api/trigger', methods=['POST'])
 def trigger_event():
     # Helper to simulate edge cases
-    pass
+    return jsonify({"status": "ok"})
 
 @app.route('/api/trigger-emergency', methods=['POST'])
 def trigger_emergency():

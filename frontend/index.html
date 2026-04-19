@@ -3,141 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PULSE | Smart Stadium Operations</title>
-    <!-- Google Fonts -->
+    <title>AI-Pulse | Smart Stadium Digital Twin</title>
+    <!-- Google Fonts: Inter and Space Grotesk -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/pages.css">
 </head>
 <body class="dark-theme">
 
+    <!-- Global App Container / Neon Background Effects -->
     <div class="ambient-glow bg-top-left"></div>
     <div class="ambient-glow bg-bottom-right"></div>
     <div id="noise-overlay"></div>
 
-    <nav id="global-nav" class="glass-nav">
-        <div class="nav-left">
-            <div class="logo-group" onclick="stadiumApp.quickReset()" style="cursor: pointer;">
-                <div class="pulse-ring-small"></div>
-                <span class="logo-text">PULSE <span class="dim">OPERATIONS</span></span>
+    <div id="app-container">
+
+        <!-- GLOBAL TOP NAV -->
+        <nav id="global-nav" class="glass-nav hidden">
+            <div class="nav-left">
+                <div class="logo-group" onclick="app.switchRole('landing')" style="cursor: pointer;" title="Return to Home">
+                    <div class="pulse-ring-small"></div>
+                    <span class="logo-text">AI-PULSE <span class="dim">STADIUM</span></span>
+                </div>
+            </div>
+            <div class="nav-center" id="nav-role-title">Attendee Mode</div>
+            <div class="nav-right">
+                <div class="nav-badge" id="nav-system-health">Health: <span class="text-green">Optimal</span></div>
+                <button class="nav-btn" onclick="app.switchRole('landing')">Home</button>
+            </div>
+        </nav>
+
+        <!-- PAGE: LANDING (ROLE SELECTION) -->
+        <div id="page-landing" class="page active">
+            <div class="landing-content glass-panel-deep">
+                <h1 class="hero-title glitch-effect" data-text="ONE STADIUM.">ONE STADIUM.</h1>
+                <h2 class="hero-subtitle text-gradient">Smarter Every Second.</h2>
+                <p class="hero-desc">Experience the future of live events. An adaptive digital twin simulating real-time AI guidance, automated emergency protocols, and crowd optimization.</p>
+                
+                <div class="role-grid mt-xl">
+                    <div class="role-card attendee-theme" onclick="app.switchRole('attendee')">
+                        <div class="role-icon">👤</div>
+                        <h3>Smart Attendee</h3>
+                        <p>Dynamic routing, AR stats & personalized live experience</p>
+                    </div>
+                    <div class="role-card ops-theme" onclick="app.switchRole('operations')">
+                        <div class="role-icon">⚡</div>
+                        <h3>Command Center</h3>
+                        <p>Live heatmaps, AI hazard prediction & automated dispatch</p>
+                    </div>
+                    <div class="role-card vendor-theme" onclick="app.switchRole('vendor')">
+                        <div class="role-icon">🛒</div>
+                        <h3>Revenue Engine</h3>
+                        <p>Predictive inventory & automated flash promotions targets</p>
+                    </div>
+                </div>
+
+                <div class="landing-metrics">
+                    <div class="metric"><span class="val">42,580</span><span class="lbl">Simulated Crowd</span></div>
+                    <div class="metric"><span class="val">12ms</span><span class="lbl">Latency</span></div>
+                    <div class="metric"><span class="val">98.7%</span><span class="lbl">Prediction Accuracy</span></div>
+                </div>
             </div>
         </div>
-        <div class="nav-right">
-            <a href="#" class="nav-btn" onclick="stadiumApp.quickReset()">Home</a>
+
+        <!-- PAGE: ATTENDEE -->
+        <div id="page-attendee" class="page">
+            <div class="layout-container">
+                <div class="column">
+                    <div class="glass-card full-height">
+                        <h3 class="panel-header text-gradient-blue">AI Routing & Navigation</h3>
+                        <div class="ar-map-wrapper">
+                            <div class="ar-overlay-text">Navigating to Z-7 (Main Concourse) <br><span class="text-sm route-status">Optimized for least crowded path.</span></div>
+                            <div class="mock-stadium-map mini-map" id="attendee-mini-map"></div>
+                        </div>
+                        <div class="routing-options">
+                            <button id="btn-route-least" class="btn-pill active" onclick="app.calculateRoute('least')">Least Crowded</button>
+                            <button id="btn-route-fast" class="btn-pill" onclick="app.calculateRoute('fast')">Fastest Route</button>
+                            <button id="btn-route-safe" class="btn-pill outline" onclick="app.calculateRoute('safe')">Family-Safe</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="column flex-col">
+                    <div class="glass-card mb-md">
+                        <h3 class="panel-header">Live Wait-Times</h3>
+                        <div id="attendee-vendor-list" class="vendor-list custom-scrollbar"></div>
+                    </div>
+                    <div class="glass-card ar-simulation">
+                        <h3 class="panel-header">AR Experience Preview</h3>
+                        <div class="ar-camera-box">
+                            <div class="ar-player-stat">#10 VIRAT<br><span class="highlight">160.7 SR</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </nav>
 
-    <!-- TOAST NOTIFICATION SYSTEM -->
-    <div id="toast-container" class="toast-container"></div>
+        <!-- PAGE: OPERATIONS COMMAND CENTER -->
+        <div id="page-operations" class="page">
+            <div class="layout-container ops-mode">
+                
+                <div class="sidebar">
+                    <div class="glass-card mb-md stats-block">
+                        <div class="stat-row">
+                            <span class="lbl">Live Network</span>
+                            <span class="val pulse-text-green" id="ops-network-status">Online</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="lbl">Est Evac Time</span>
+                            <span class="val" id="ops-evac-time">3.2 Min</span>
+                        </div>
+                    </div>
 
-    <div class="dashboard-wrapper">
-        <!-- LEFT: Operations Command Center -->
-        <aside class="dashboard-col col-left">
-            <div class="glass-card mb-md">
-                <h3 class="panel-header mb-sm">Command Center</h3>
-                <div class="metric-block">
-                    <span class="val pulse-text-green" id="ui-live-crowd">42,580</span>
-                    <span class="lbl">Live Crowd</span>
+                    <div class="glass-card flex-grow alerts-container flex-col">
+                        <h3 class="panel-header flex-between mb-sm">Live Alert Feed <div style="display:flex; align-items:center; gap:8px;"><span class="text-xs text-muted">Updating in real-time...</span><span class="live-dot-red"></span></div></h3>
+                        <div id="ops-alert-feed" class="alert-feed custom-scrollbar"></div>
+                    </div>
                 </div>
-                <hr class="nav-divider w-full mt-sm mb-sm" style="height:1px;">
-                <div class="metric-block">
-                    <span class="val" id="ui-sys-health">100%</span>
-                    <span class="lbl">System Health</span>
+
+                <div class="main-content flex-col">
+                    <!-- The Digital Twin Heatmap -->
+                    <div class="glass-card flex-grow heatmap-container relative">
+                        <div class="header-row flex-between">
+                            <h3 class="panel-header">Digital Twin Occupancy Heatmap</h3>
+                            <div class="legend">LOW <span></span> HIGH</div>
+                        </div>
+                        <div id="ops-stadium-map" class="stadium-grid ops-grid"></div>
+                    </div>
+                </div>
+
+                <div class="sidebar edge-case-panel">
+                    <div class="glass-card flex-grow flex-col">
+                        <h3 class="panel-header text-red mb-md">Interactive Edge Cases</h3>
+                        <p class="text-xs text-muted mb-md">Trigger events to simulate the adaptive AI response.</p>
+                        
+                        <div class="trigger-btn-group">
+                            <!-- 1. Zone Closure -->
+                            <button class="btn-trigger btn-close" onclick="app.triggerZoneClosure('Z-3')">🚫 Close Z-3 (Food Court A)</button>
+                            
+                            <!-- 2. Emergency Mode -->
+                            <button class="btn-trigger btn-emergency" onclick="app.triggerEmergency()">🚨 Trigger Fire Evacuation</button>
+                            
+                            <!-- 3. Crowd Surge -->
+                            <button class="btn-trigger btn-surge" onclick="app.triggerSurge('Z-7')">📈 Surge Crowd in Z-7</button>
+
+                            <!-- 4. Vendor Overload -->
+                            <button class="btn-trigger btn-vendor" onclick="app.triggerVendorOverload('V2')">🧃 Overload Vendor (V2)</button>
+
+                            <!-- 5. Sensor Failure -->
+                            <button class="btn-trigger btn-sensor" onclick="app.triggerSensorFailure()">📴 Simulate Sensor Drop</button>
+                        </div>
+
+                        <hr class="divider mt-md mb-md">
+                        <button class="btn-pill outline w-full" onclick="app.resolveEvents()">Reset Simulations</button>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="glass-card flex-grow alerts-container flex-col">
-                <div class="flex-between mb-sm">
-                    <h3 class="panel-header">System Alerts</h3>
-                    <span class="live-dot-red"></span>
-                </div>
-                <div id="ui-alert-feed" class="alert-feed custom-scrollbar">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
-            
-            <div class="glass-card mt-md">
-                <h3 class="panel-header mb-sm">Attendee Simulation</h3>
-                <div class="routing-options">
-                    <button class="btn-pill" onclick="stadiumApp.triggerAttendeeRoute('Least Crowded')">Least Crowded</button>
-                    <button class="btn-pill" onclick="stadiumApp.triggerAttendeeRoute('Fastest Route')">Fastest Route</button>
-                </div>
-                <p class="text-xs text-muted mt-sm" id="ui-route-eta">ETA: 4.2 Min to Exit</p>
-            </div>
-        </aside>
-
-        <!-- CENTER: Live Heatmap -->
-        <main class="dashboard-col col-center flex-col">
-            <div class="glass-card flex-grow heatmap-container relative">
-                <div class="flex-between mb-md">
-                    <h3 class="panel-header">Digital Twin Heatmap & Prediction</h3>
-                    <div class="legend">LOW <span></span> HIGH</div>
-                </div>
-
-                <div class="heatmap-diagram">
-                    <!-- Stadium Graph Representation -->
-                    <div class="zone-overlay" id="zone-A">
-                        <div class="z-title">Sector A</div>
-                        <div class="z-val" id="val-zone-A">45%</div>
+        <!-- PAGE: VENDOR REVENUE ENGINE -->
+        <div id="page-vendor" class="page">
+            <div class="layout-container vendor-mode">
+                <div class="top-row flex-gap">
+                    <div class="glass-card stat-big flex-1">
+                        <h4 class="lbl">Predicted Demand</h4>
+                        <div class="val text-gradient-purple" id="vendor-demand-state">Stable</div>
+                        <div class="sub-val">AI Forecast (+30m)</div>
                     </div>
-                    <div class="zone-overlay" id="zone-B">
-                        <div class="z-title">Sector B</div>
-                        <div class="z-val" id="val-zone-B">62%</div>
+                    <div class="glass-card stat-big flex-1">
+                        <h4 class="lbl">Inventory Index</h4>
+                        <div class="val" id="vendor-inv-index">85%</div>
+                        <div class="sub-val text-red" id="vendor-inv-warning" style="display:none;">CRITICAL ALERT</div>
                     </div>
-                    <div class="zone-overlay" id="zone-C">
-                        <div class="z-title">Sector C</div>
-                        <div class="z-val" id="val-zone-C">30%</div>
+                    <div class="glass-card stat-big flex-1">
+                        <h4 class="lbl">Queue Wait</h4>
+                        <div class="val" id="vendor-queue-time">5m</div>
+                        <div class="sub-val">Avg. Processing</div>
                     </div>
-                    <div class="zone-overlay" id="zone-D">
-                        <div class="z-title">Sector D</div>
-                        <div class="z-val" id="val-zone-D">80%</div>
-                    </div>
-                    
-                    <!-- Center Pitch Box Graphic -->
-                    <div class="pitch-graphic">LIVE EVENT</div>
-                </div>
-
-                <div class="ai-prediction-box mt-md">
-                    <h4 class="text-gradient">AI Prediction Model</h4>
-                    <p class="text-sm" id="ui-prediction-text">Stable crowd flow expected over the next 15 minutes.</p>
-                </div>
-            </div>
-        </main>
-
-        <!-- RIGHT: Vendor & Triggers -->
-        <aside class="dashboard-col col-right">
-            <div class="glass-card mb-md">
-                <h3 class="panel-header mb-sm text-gradient-purple">Revenue Optimizer</h3>
-                <div class="flex-between mb-sm">
-                    <span class="text-sm text-muted">Active Promos</span>
-                    <span class="font-bold text-gradient" id="ui-active-promos">0</span>
                 </div>
                 
-                <div class="promo-box">
-                    <h4>Smart Flash Promo</h4>
-                    <p class="text-xs text-muted mt-sm mb-md">AI suggests 10% discount to re-route Zone B traffic.</p>
-                    <button class="btn-pill vendor-action font-bold w-full" onclick="stadiumApp.triggerVendorDeploy()">Trigger Now</button>
+                <div class="bottom-row flex-gap mt-lg">
+                    <div class="glass-card flex-2">
+                        <h3 class="panel-header mb-md">Demand Trend Analytics</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="vendorChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="glass-card flex-1 flex-col">
+                        <h3 class="panel-header mb-md">Smart Promotion AI</h3>
+                        <div class="promo-box">
+                            <div class="promo-icon">🎯</div>
+                            <h4>Low Traffic Detected in South Corridor</h4>
+                            <p class="text-sm text-muted mt-sm mb-md">Automatically send a 20% discount notification to attendees within a 50m radius based on current pathing AI.</p>
+                            <button id="btn-deploy-promo" class="btn-pill vendor-action font-bold w-full" onclick="app.deployPromo()">Deploy Flash Promo</button>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="glass-card flex-grow flex-col">
-                <h3 class="panel-header text-red mb-md">Edge Case Console</h3>
-                <p class="text-xs text-muted mb-md">Simulate environmental triggers.</p>
-                
-                <div class="trigger-btn-group">
-                    <button class="btn-trigger btn-surge" onclick="stadiumApp.triggerSurge()">📈 Crowd Surge (Zone C)</button>
-                    <button class="btn-trigger btn-emergency" onclick="stadiumApp.triggerFire()">🚨 Fire Evacuation</button>
-                    <button class="btn-trigger btn-sensor" onclick="stadiumApp.triggerSensorDrop()">📴 Sensor Drop (Zone A)</button>
-                </div>
-
-                <hr class="nav-divider w-full mt-md mb-md" style="height:1px;">
-                <button class="btn-pill outline w-full" style="border-color:orange" onclick="stadiumApp.resetSimulation()">Reset Simulation</button>
-            </div>
-        </aside>
     </div>
 
-    <!-- Simulation Script -->
+    <!-- Main Logic Script -->
     <script src="./js/app.js"></script>
 </body>
 </html>
