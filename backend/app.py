@@ -3,6 +3,7 @@ from flask_cors import CORS
 import random
 import time
 import threading
+import os
 
 app = Flask(__name__)
 CORS(app)
@@ -189,5 +190,5 @@ def reset_simulation():
     add_alert("SYSTEM RESET: AI Digital Twin synchronized to baseline.", "system")
     return jsonify({"status": "reset_complete"})
 
-if __name__ == '__main__':
-    app.run(port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
